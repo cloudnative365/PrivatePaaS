@@ -1,0 +1,230 @@
+groups:
+- name: OS
+  rules:
+
+   # Alert for any instance that is unreachable for >5 minutes.
+   # function a() {    $(a) ; }
+   # a &
+  - alert: MemoryUsage
+    expr: round(((node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes)/node_memory_MemTotal_bytes) * 100) > 80
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Memory of instance {{ $labels.instance }} is not enough"
+      description: "Memory usage of {{ $labels.instance }} is too much for more than 15 minutes. (current value: {{ $value }}%"
+
+  # Alert for any instance that is unreachable for >5 minutes.
+  # use "cat /dev/urandom | md5sum" to for CPU working with 100%
+  - alert: CPUUsage
+    expr: round((1 - avg(rate(node_cpu_seconds_total{mode="idle"}[15m])) by (instance)) * 100) > 80
+    #expr: round((1 - irate(node_cpu_seconds_total{mode="idle"}) by (instance)) * 100) > 80
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "CPU usage of instance {{ $labels.instance }} is too hight"
+      description: "CPU usage of {{ $labels.instance }} is too much for more than 15 minutes. (current value: {{ $value }}%"
+
+  # Alert for any instance that has a median request latency >1s.
+  # dd if=/dev/zero of=test bs=1024M count=40
+  - alert: RootfsUsage
+    expr: round((node_filesystem_size_bytes{device="rootfs"}-node_filesystem_free_bytes{device="rootfs"})/node_filesystem_size_bytes{device="rootfs"} * 100) > 85
+    for: 30s
+    labels:
+      serverity: warning
+    annotations:
+      summary: "Not enough space for root fs on {{ $labels.instance }}"
+      description: "Not enough space for root fs on {{ $labels.instance }}. (current value: {{ $value }})%"
+
+  - alert: ProcessNodeExporter
+    expr: up{job="metrics-wigner002"} == 0
+    for: 15s
+    labels:
+      serverity: critical
+    annotations:
+      summary: "Node Exporter on {{ $labels.instance }} is not running"
+      description: "Node Exporter on {{ $labels.instance }} is not running"
+
+
+  - alert: ProcessDocker
+    expr: node_systemd_unit_state{name="docker.service",state="active"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "service {{ $labels.name }} on {{ $labels.instance }} is down"
+      description: "service {{ $labels.name }} on {{ $labels.instance }} is down"
+
+  - alert: ProcessKubelet
+    expr: node_systemd_unit_state{name="kubelet.service",state="active"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "service {{ $labels.name }} on {{ $labels.instance }} is down"
+      description: "service {{ $labels.name }} on {{ $labels.instance }} is down"
+
+  - alert: ProcessETCD
+    expr: node_systemd_unit_state{name="etcd_container.service",state="active"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "service {{ $labels.name }} on {{ $labels.instance }} is down"
+      description: "service {{ $labels.name }} on {{ $labels.instance }} is down"
+
+  - alert: PodCalicoController
+    expr: kube_pod_container_status_running{container="calico-kube-controllers"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodCalicoNode
+    expr: kube_pod_container_status_running{container="calico-node"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodKubeApiserver
+    expr: kube_pod_container_status_running{container="kube-apiserver"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodKubeScheduler
+    expr: kube_pod_container_status_running{container="kube-scheduler"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodKubeControllerManager
+    expr: kube_pod_container_status_running{container="kube-controller-manager"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodKubeDNS
+    expr: kube_pod_container_status_running{container="kubedns"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodKubeProxy
+    expr: kube_pod_container_status_running{container="kube-proxy"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+
+  - alert: PodMetricsServer
+    expr: kube_pod_container_status_running{container="kube-proxy"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodRbdProvisions
+    expr: kube_pod_container_status_running{container="rbd-provisioner"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodTiller
+    expr: kube_pod_container_status_running{container="tiller"} == 0
+    for: 30s
+    labels:
+      severity: warining
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodFileserver
+    expr: kube_pod_container_status_running{container="fileserver"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodNfsProvisions
+    expr: kube_pod_container_status_running{container="nfs-provisioner"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodDefaultHttpBackend
+    expr: kube_pod_container_status_running{container="default-http-backend"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodNginxIngressController
+    expr: kube_pod_container_status_running{container="nginx-ingress-controller"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodKubeStateMetrics
+    expr: kube_pod_container_status_running{container="kube-state-metrics"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: PodPrometheus
+    expr: kube_pod_container_status_running{container="prometheus"} == 0
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "pod {{ $labels.container }} is not running"
+      description: "pod {{ $labels.container }} is not running"
+
+  - alert: NodeStatus
+    expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $labels.instance }} is not in ready"
+      description: "{{ $labels.instance }} is not in ready"
+
