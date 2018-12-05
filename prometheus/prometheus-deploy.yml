@@ -33,6 +33,18 @@ spec:
           name: data
         - mountPath: "/etc/prometheus"
           name: config-volume
+        - mountPath: "/etc/prometheus/targets"
+          name: config-volume-targets
+        - mountPath: "/etc/prometheus/targets/node_exporter"
+          name: config-targets-nodeexporter
+        - mountPath: "/etc/prometheus/rules"
+          name: config-volume-rules
+        - mountPath: "/etc/prometheus/targets/ceph"
+          name: config-targets-ceph
+        - mountPath: "/etc/prometheus/targets/federate"
+          name: config-targets-federate
+        - mountPath: "/etc/prometheus/targets/etcd"
+          name: config-targets-etcd
         resources:
           requests:
             cpu: 100m
@@ -49,3 +61,17 @@ spec:
       - name: config-volume
         configMap:
           name: prometheus-config
+      - name: config-volume-rules
+        configMap:
+          name: config-rules-default
+      - name: config-volume-targets
+        emptyDir: {}
+      - name: config-targets-nodeexporter
+        configMap:
+          name: prometheus-config-nodeexporter
+      - name: config-targets-ceph
+        emptyDir: {}
+      - name: config-targets-federate
+        emptyDir: {}
+      - name: config-targets-etcd
+        emptyDir: {}
