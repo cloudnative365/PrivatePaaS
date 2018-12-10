@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-pipe-deploy
+  namespace: fluentd-pipe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fluentd-pipe
+  template:
+    metadata:
+      labels:
+        app: fluentd-pipe
+    spec:
+      containers:
+        - name: fluentd-pipe
+          image: docker.io/fluent/fluentd
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: alert-port
+            containerPort: 24226
+          command: ['/usr/bin/gem', 'install', 'fluent-plugin-elasticsearch', 'fluent-plugin-alertmanager', 'fluent-plugin-prometheus', 'fluent-plugin-kafka']

@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fluentd-pipe-svc
+  namespace: fluentd-pipe
+spec:
+  #clusterIP: None
+  selector:
+    app: fluentd-pipe
+  ports:
+  - port: 24226
+    targetPort: 24226
+    name: fluentd-pipe-svc-port
