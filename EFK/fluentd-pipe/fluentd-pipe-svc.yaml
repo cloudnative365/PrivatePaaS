@@ -4,10 +4,12 @@ metadata:
   name: fluentd-pipe-svc
   namespace: fluentd-pipe
 spec:
+  type: NodePort
   #clusterIP: None
   selector:
     app: fluentd-pipe
   ports:
   - port: 24226
+    nodePort: 24226
     targetPort: 24226
     name: fluentd-pipe-svc-port
