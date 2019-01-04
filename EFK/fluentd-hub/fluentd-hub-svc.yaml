@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fluentd-hub-svc
+  namespace: fluentd-hub
+spec:
+  type: NodePort
+  #clusterIP: None
+  selector:
+    app: fluentd-hub
+  ports:
+  - port: 24226
+    nodePort: 32006
+    targetPort: 24226
+    name: nginxlog-port
+  - port: 24224
+    nodePort: 32004
+    targetPort: 24224
+    name: syslog-port

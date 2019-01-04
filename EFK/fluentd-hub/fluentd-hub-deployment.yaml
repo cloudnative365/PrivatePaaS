@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-hub-deploy
+  namespace: fluentd-hub
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fluentd-hub
+  template:
+    metadata:
+      labels:
+        app: fluentd-hub
+    spec:
+      containers:
+        - name: fluentd-hub
+          image: docker.io/fluent/fluentd
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: syslog-port
+            containerPort: 24224
+          - name: k8s-port
+            containerPort: 24225
+          - name: app-port
+            containerPort: 24226
+          command: ['/bin/sh', '-c']
+          args:
+            - /usr/bin/gem install fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-route;
+              /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
+          volumeMounts:
+          - name: fluentd-config
+            mountPath: "/fluentd/etc/"
+      volumes:
+      - name: fluentd-config
+        configMap:
+          name: fluentd-hub-config
