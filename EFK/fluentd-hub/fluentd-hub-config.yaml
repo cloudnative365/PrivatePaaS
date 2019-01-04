@@ -5,11 +5,30 @@ metadata:
   namespace: fluentd-hub
 data:
   fluent.conf: |
+    # promethues metrics
+    <source>
+      @type prometheus
+    </source>
+  
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+  
+    <source>
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
     # syslog input
     <source>
       @type forward
       @label @SYSLOG
-      port 24224
+      port 32001
       <parse>
         @type syslog
       </parse>
@@ -21,7 +40,7 @@ data:
     <source>
       @type forward
       @label @K8SLOG
-      port 24225
+      port 32002
       <parse>
         @type json
       </parse>
@@ -33,7 +52,7 @@ data:
     <source>
       @type forward
       @label @NGINXLOG
-      port 24226
+      port 32003
       <parse>
         @type nginx
       </parse>

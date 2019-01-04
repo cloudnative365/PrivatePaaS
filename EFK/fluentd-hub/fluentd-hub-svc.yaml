@@ -9,11 +9,15 @@ spec:
   selector:
     app: fluentd-hub
   ports:
-  - port: 24226
-    nodePort: 32006
-    targetPort: 24226
-    name: nginxlog-port
-  - port: 24224
-    nodePort: 32004
-    targetPort: 24224
-    name: syslog-port
+  - name: syslog-port
+    port: 32001
+    nodePort: 32001
+    targetPort: 32001
+  - name: k8slog-port
+    port: 32002
+    nodePort: 32002
+    targetPort: 32002
+  - name: nginxlog-port
+    port: 32003
+    nodePort: 32003
+    targetPort: 32003

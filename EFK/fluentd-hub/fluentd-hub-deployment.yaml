@@ -18,12 +18,14 @@ spec:
           image: docker.io/fluent/fluentd
           imagePullPolicy: IfNotPresent
           ports:
+          - name: metrics-port
+            containerPort: 24231
           - name: syslog-port
-            containerPort: 24224
+            containerPort: 32001
           - name: k8s-port
-            containerPort: 24225
-          - name: app-port
-            containerPort: 24226
+            containerPort: 32002
+          - name: nginx-port
+            containerPort: 32003
           command: ['/bin/sh', '-c']
           args:
             - /usr/bin/gem install fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-route;
