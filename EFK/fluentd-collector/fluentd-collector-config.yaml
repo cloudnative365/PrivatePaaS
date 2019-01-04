@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-alert-collector-config
+  namespace: fluentd-alert-collector
+data:
+  fluent.conf: |
+#-----metrics for promethues-----
+    <source>
+      @type prometheus
+    </source>
+  
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+  
+    <source>
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+#-----alert log to es-----
+    <source>
+      @type kafka
+      @label @ALERT_LOG
+      brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
+      format json
+      topics alertmanager
+    </source>
+
+    <label ALERT_LOG>
+      <match **>
+        @type copy
+        <store>
+          @type elasticsearch
+          hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
+          index_name alertmanager.%Y%m%d
+          logstash_format true
+        </store>
+        <store>
+          @type file
+          <format>
+            @type json
+          </format>
+          path /tmp/alertmanager
+          time_slice_format %Y%m%d
+        </store>
+      </match>
+    </label>
+#-----sys log to es-----
+    <source>
+      @type kafka
+      @label @SYS_LOG
+      brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
+      format json
+      topics syslog
+    </source>
+
+    <label SYS_LOG>
+      <match **>
+        @type copy
+        <store>
+          @type elasticsearch
+          hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
+          index_name syslog.%Y%m%d
+          logstash_format true
+        </store>
+        <store>
+          @type file
+          <format>
+            @type json
+          </format>
+          path /tmp/syslog
+          time_slice_format %Y%m%d
+        </store>
+      </match>
+    </label>
+#-----k8s log to es-----
+    <source>
+      @type kafka
+      @label @K8S_LOG
+      brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
+      format json
+      topics k8slog
+    </source>
+
+    <label K8S_LOG>
+      <match **>
+        @type copy
+        <store>
+          @type elasticsearch
+          hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
+          index_name k8slog.%Y%m%d
+          logstash_format true
+        </store>
+        <store>
+          @type file
+          <format>
+            @type json
+          </format>
+          path /tmp/k8slog
+          time_slice_format %Y%m%d
+        </store>
+      </match>
+    </label>
+#-----nginx log to es-----
+    <source>
+      @type kafka
+      @lable @NGINX_LOG
+      brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
+      format json
+      topics nginxlog
+    </source>
+
+    <label NGINX_LOG>
+      <match **>
+        @type copy
+        <store>
+          @type elasticsearch
+          hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
+          index_name nginxlog.%Y%m%d
+          logstash_format true
+        </store>
+        <store>
+          @type file
+          <format>
+            @type json
+          </format>
+          path /tmp/nginxlog
+          time_slice_format %Y%m%d
+        </store>
+      </match>
+    </label>
