@@ -19,7 +19,7 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
           - name: alert-port
-            containerPort: 24226
+            containerPort: 32010
           command: ['/bin/sh', '-c']
           args:
             - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka;

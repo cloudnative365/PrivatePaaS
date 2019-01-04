@@ -6,12 +6,31 @@ metadata:
 data:
   fluent.conf: |
     <source>
+      @type prometheus
+    </source>
+  
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+  
+    <source>
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    <source>
       @type http
-      port 24226
+      port 32010
       bind 0.0.0.0
       body_size_limit 32m
       keepalive_timeout 10s
     </source>
+
     <match **>
       @type copy
       <store>
@@ -24,6 +43,9 @@ data:
       </store>
       <store>
         @type file
+        <format>
+          @type json
+        </format>
         path /tmp/alertmanager
         time_slice_format %Y%m%d
       </store>

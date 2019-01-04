@@ -9,7 +9,7 @@ spec:
   selector:
     app: fluentd-pipe
   ports:
-  - port: 24226
-    nodePort: 24226
-    targetPort: 24226
-    name: fluentd-pipe-svc-port
+  - name: alert-port
+    port: 32010
+    nodePort: 32010
+    targetPort: 32010
