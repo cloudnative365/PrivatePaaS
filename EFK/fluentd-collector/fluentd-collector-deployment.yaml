@@ -22,7 +22,7 @@ spec:
             containerPort: 24231
           command: ['/bin/sh', '-c']
           args:
-            - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka;
+            - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-prometheus fluent-plugin-kafka;
               /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
           volumeMounts:
           - name: fluentd-config

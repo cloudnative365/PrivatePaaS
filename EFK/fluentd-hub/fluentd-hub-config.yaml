@@ -30,7 +30,7 @@ data:
       @label @SYSLOG
       port 32001
       <parse>
-        @type syslog
+        @type json
       </parse>
       bind 0.0.0.0
       body_size_limit 32m
@@ -54,7 +54,7 @@ data:
       @label @NGINXLOG
       port 32003
       <parse>
-        @type nginx
+        @type json
       </parse>
       bind 0.0.0.0
       body_size_limit 32m
@@ -91,11 +91,13 @@ data:
         <record>
           hostname "#{Socket.gethostname}"
           tag syslog_alert
+          labels {"alertname": "${tag}-${time}","serverity": "critical","host": "${record[\"host\"]}","ident": "systemd"}
+          annotations {"summary": "${tag}","description": "${record[\"message\"]}"}
         </record>
       </filter>
       <match **>
         @type alertmanager
-        endpoint_url http://10.210.149.27:9093/api/v1/alerts
+        endpoint_url http://10.210.59.4:9093/api/v1/alerts
       </match>
     </label>
 
@@ -141,11 +143,13 @@ data:
         <record>
           hostname "#{Socket.gethostname}"
           tag k8slog_alert
+          labels {"alertname": "${tag}-${time}","serverity": "critical","host": "${record[\"host\"]}","ident": "systemd"}
+          annotations {"summary": "${tag}","description": "${record[\"message\"]}"}
         </record>
       </filter>
       <match **>
         @type alertmanager
-        endpoint_url http://10.210.149.27:9093/api/v1/alerts
+        endpoint_url http://10.210.59.4:9093/api/v1/alerts
       </match>
     </label>
 
@@ -183,7 +187,7 @@ data:
         @type grep
         <regexp>
           key METHOD
-          pattern GET
+          pattern POST
         </regexp>
       </filter>
       <filter **>
@@ -192,11 +196,13 @@ data:
         <record>
           hostname "#{Socket.gethostname}"
           tag nginxlog_alert
+          labels {"alertname": "${tag}-${time}","serverity": "critical","host": "${record[\"host\"]}","ident": "systemd"}
+          annotations {"summary": "${tag}","description": "${record[\"message\"]}"}
         </record>
       </filter>
       <match **>
         @type alertmanager
-        endpoint_url http://10.210.149.27:9093/api/v1/alerts
+        endpoint_url http://10.210.59.4:9093/api/v1/alerts
       </match>
     </label>
 

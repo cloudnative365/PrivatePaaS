@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluentd-alert-collector-config
-  namespace: fluentd-alert-collector
+  name: fluentd-collector-config
+  namespace: fluentd-collector
 data:
   fluent.conf: |
-#-----metrics for promethues-----
+    #-----metrics for promethues-----
     <source>
       @type prometheus
     </source>
@@ -23,7 +23,7 @@ data:
         host ${hostname}
       </labels>
     </source>
-#-----alert log to es-----
+    #-----alert log to es-----
     <source>
       @type kafka
       @label @ALERT_LOG
@@ -32,14 +32,16 @@ data:
       topics alertmanager
     </source>
 
-    <label ALERT_LOG>
+    <label @ALERT_LOG>
       <match **>
         @type copy
         <store>
           @type elasticsearch
           hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
-          index_name alertmanager.%Y%m%d
+          flush_interval 5s
           logstash_format true
+          include_timestamp true
+          logstash_prefix ${tag}
         </store>
         <store>
           @type file
@@ -51,7 +53,7 @@ data:
         </store>
       </match>
     </label>
-#-----sys log to es-----
+    #-----sys log to es-----
     <source>
       @type kafka
       @label @SYS_LOG
@@ -60,14 +62,16 @@ data:
       topics syslog
     </source>
 
-    <label SYS_LOG>
+    <label @SYS_LOG>
       <match **>
         @type copy
         <store>
           @type elasticsearch
           hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
-          index_name syslog.%Y%m%d
+          flush_interval 5s
           logstash_format true
+          include_timestamp true
+          logstash_prefix ${tag}
         </store>
         <store>
           @type file
@@ -79,7 +83,7 @@ data:
         </store>
       </match>
     </label>
-#-----k8s log to es-----
+    #-----k8s log to es-----
     <source>
       @type kafka
       @label @K8S_LOG
@@ -88,14 +92,16 @@ data:
       topics k8slog
     </source>
 
-    <label K8S_LOG>
+    <label @K8S_LOG>
       <match **>
         @type copy
         <store>
           @type elasticsearch
           hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
-          index_name k8slog.%Y%m%d
+          flush_interval 5s
           logstash_format true
+          include_timestamp true
+          logstash_prefix ${tag}
         </store>
         <store>
           @type file
@@ -107,23 +113,25 @@ data:
         </store>
       </match>
     </label>
-#-----nginx log to es-----
+    #-----nginx log to es-----
     <source>
       @type kafka
-      @lable @NGINX_LOG
+      @label @NGINX_LOG
       brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
       format json
       topics nginxlog
     </source>
 
-    <label NGINX_LOG>
+    <label @NGINX_LOG>
       <match **>
         @type copy
         <store>
           @type elasticsearch
           hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
-          index_name nginxlog.%Y%m%d
+          flush_interval 5s
           logstash_format true
+          include_timestamp true
+          logstash_prefix ${tag}
         </store>
         <store>
           @type file
