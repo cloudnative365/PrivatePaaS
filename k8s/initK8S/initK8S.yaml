@@ -1,0 +1,42 @@
+apiVersion: kubeadm.k8s.io/v1alpha3
+kind: ClusterConfiguration
+etcd:
+  external:
+    endpoints:
+    - "https://10.210.149.25:2379"
+    - "https://10.210.149.26:2379"
+    - "https://10.210.149.27:2379"
+    caFile: "/etc/etcd/ssl/ca.pem"
+    certFile: "/etc/etcd/ssl/etcd.pem"
+    keyFile: "/etc/etcd/ssl/etcd-key.pem"
+    dataDir: "/data/etcd/data/"
+networking:
+  podSubnet: "192.168.0.0/16"
+kubernetesVersion: stable
+apiServerCertSANs:
+- "node-10-210-149-21"
+- "node-10-210-149-22"
+- "node-10-210-149-25"
+- "node-10-210-149-26"
+- "node-10-210-149-27"
+- "node-10-210-149-28"
+- "node-10-210-149-29"
+- "node-10-210-149-30"
+- "10.210.149.21"
+- "10.210.149.22"
+- "10.210.149.23"
+- "10.210.149.24"
+- "10.210.149.25"
+- "10.210.149.26"
+- "10.210.149.27"
+- "10.210.149.28"
+- "10.210.149.29"
+- "10.210.149.30"
+- "127.0.0.1"
+- "localhost"
+token: "547df0.182e9215291ff27f"
+tokenTTL: "0"
+auditPolicy:
+  path: "/var/log/audit/audit.json"
+  logDir: "/var/log/audit"
+  logMaxAge: 7
