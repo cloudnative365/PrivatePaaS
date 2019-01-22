@@ -26,6 +26,7 @@ touch /etc/td-agent-bit/plugins.conf
 mkdir /etc/td-agent-bit/conf.d/
 
 # Get config file from git
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/td-agent-bit.conf -O /etc/td-agent-bit/td-agent-bit.conf
 wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/k8slog.app.conf -O /etc/td-agent-bit/conf.d/k8slog.app.conf
 wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/k8slog.core.conf -O /etc/td-agent-bit/conf.d/k8slog.core.conf
 wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/nginx.access.conf -O /etc/td-agent-bit/conf.d/nginx.access.conf
