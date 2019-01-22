@@ -36,4 +36,4 @@ wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/ag
 
 # systemctl
 systemctl enable td-agent-bit
-systemctl start td-agent-bit
+systemctl restart td-agent-bit
