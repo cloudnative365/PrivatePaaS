@@ -1,39 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fluentd-hub-deploy
-  namespace: fluentd-hub
+  name: syslog-messages-deploy
+  namespace: fbit-hub
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: fluentd-hub
+      app: syslog-messages
   template:
     metadata:
       labels:
-        app: fluentd-hub
+        app: syslog-messages
     spec:
       containers:
-        - name: fluentd-hub
-          image: docker.io/fluent/fluentd
+        - name: syslog-messages
+          image: docker.io/fluent/fluent-bit
           imagePullPolicy: IfNotPresent
           ports:
           - name: metrics-port
-            containerPort: 24231
-          - name: syslog-port
-            containerPort: 32001
-          - name: k8s-port
-            containerPort: 32002
-          - name: nginx-port
-            containerPort: 32003
-          command: ['/bin/sh', '-c']
-          args:
-            - /usr/bin/gem install fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-route fluent-plugin-suppress;
-              /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
-          volumeMounts:
-          - name: fluentd-config
-            mountPath: "/fluentd/etc/"
-      volumes:
-      - name: fluentd-config
-        configMap:
-          name: fluentd-hub-config
+            containerPort: 2020
+          - name: log-port
+            containerPort: 32101
