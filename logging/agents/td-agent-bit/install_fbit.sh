@@ -26,6 +26,12 @@ touch /etc/td-agent-bit/plugins.conf
 mkdir /etc/td-agent-bit/conf.d/
 
 # Get config file from git
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/k8slog.app.conf -O /etc/td-agent-bit/conf.d/k8slog.app.conf
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/k8slog.core.conf -O /etc/td-agent-bit/conf.d/k8slog.core.conf
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/nginx.access.conf -O /etc/td-agent-bit/conf.d/nginx.access.conf
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/nginx.error.conf -O /etc/td-agent-bit/conf.d/nginx.error.conf
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/syslog.audit.conf -O /etc/td-agent-bit/conf.d/syslog.audit.conf
+wget https://raw.githubusercontent.com/zhangke0516/PrivatePaaS/master/logging/agents/td-agent-bit/conf/conf.d/syslog.messages.conf -O /etc/td-agent-bit/conf.d/syslog.messages.conf
 
 # systemctl
 systemctl enable td-agent-bit
