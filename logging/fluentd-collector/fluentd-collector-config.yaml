@@ -56,13 +56,13 @@ data:
     #-----sys log to es-----
     <source>
       @type kafka
-      @label @SYS_LOG
+      @label @MESSAGES_LOG
       brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
       format json
-      topics syslog
+      topics messages
     </source>
 
-    <label @SYS_LOG>
+    <label @MESSAGES_LOG>
       <match **>
         @type copy
         <store>
@@ -78,7 +78,7 @@ data:
           <format>
             @type json
           </format>
-          path /tmp/syslog
+          path /tmp/messages
           time_slice_format %Y%m%d
         </store>
       </match>
