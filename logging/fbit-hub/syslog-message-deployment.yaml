@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syslog-messages-deploy
+  name: syslog-message-deploy
   namespace: fbit-hub
 spec:
   replicas: 3
@@ -14,11 +14,22 @@ spec:
         app: syslog-messages
     spec:
       containers:
-        - name: syslog-messages
-          image: docker.io/fluent/fluent-bit
+        - name: syslog-message
+          image: docker.io/fluent/fluentd
           imagePullPolicy: IfNotPresent
           ports:
           - name: metrics-port
-            containerPort: 2020
-          - name: log-port
+            containerPort: 24231
+          - name: messages-port
             containerPort: 32101
+          command: ['/bin/sh', '-c']
+          args:
+            - /usr/bin/gem install fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-route;
+              /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
+          volumeMounts:
+          - name: messages-config
+            mountPath: "/fluentd/etc/"
+      volumes:
+      - name: syslog-messages-config
+        configMap:
+          name: syslog-messages-config
