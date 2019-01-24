@@ -69,15 +69,14 @@ data:
       <filter **>
         @type record_transformer
         <record>
-          hostname "#{Socket.gethostname}"
-          tag messages_alert
+          tag ${tag}
           labels {"alertname": "${tag}-${time}","serverity": "critical","host": "${record[\"host\"]}","ident": "su"}
           annotations {"summary": "${tag}","description": "${record[\"message\"]}"}
         </record>
       </filter>
       <match **>
         @type alertmanager
-        endpoint_url http://10.210.59.4:9093/api/v1/alerts
+        endpoint_url http://alertmanager.ekaexhz.seli.gic.ericsson.se:9093/api/v1/alerts
       </match>
     </label>
 

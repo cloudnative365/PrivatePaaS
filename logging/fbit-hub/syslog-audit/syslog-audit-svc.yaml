@@ -1,15 +1,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: fbit-hub-svc
+  name: syslog-audit-svc
   namespace: fbit-hub
 spec:
   type: NodePort
   #clusterIP: None
   selector:
-    app: syslog-messages
+    app: syslog-audit
   ports:
-  - name: messages-port
-    port: 32101
-    nodePort: 32101
-    targetPort: 32101
+  - name: audit-port
+    port: 32102
+    nodePort: 32102
+    targetPort: 32102

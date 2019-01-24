@@ -27,74 +27,73 @@ data:
     # message input
     <source>
       @type forward
-      @label @MESSAGES
-      port 32101
+      @label @CORE
+      port 32111
       <parse>
-        @type syslog
+        @type json
       </parse>
       bind 0.0.0.0
       body_size_limit 32m
       keepalive_timeout 10s
     </source>
 
-    <label @MESSAGES>
+    <label @CORE>
       <filter **>
         @type record_transformer
         <record>
-          log_ident syslog.messages
+          log_ident k8slog.core
         </record>
       </filter>
       <match **>
         @type route
-        add_tag_prefix syslog.messages
+        add_tag_prefix k8slog.core
         <route **>
           copy
-          @label @MESSAGES_ALERT
+          @label @CORE_ALERT
         </route>
         <route **>
           copy
-          @label @MESSAGES_KAFKA
+          @label @CORE_KAFKA
         </route>
       </match>
     </label>
 
-    <label @MESSAGES_ALERT>
+    <label @CORE_ALERT>
       <filter **>
         @type grep
         <regexp>
-          key ident
-          pattern su
+          key log
+          pattern ERROR
         </regexp>
       </filter>
       <filter **>
         @type record_transformer
         <record>
-          hostname "#{Socket.gethostname}"
-          tag messages_alert
+          tag ${tag}
           labels {"alertname": "${tag}-${time}","serverity": "critical","host": "${record[\"host\"]}","ident": "su"}
           annotations {"summary": "${tag}","description": "${record[\"message\"]}"}
         </record>
       </filter>
       <match **>
         @type alertmanager
-        endpoint_url http://10.210.59.4:9093/api/v1/alerts
+        endpoint_url http://alertmanager.ekaexhz.seli.gic.ericsson.se:9093/api/v1/alerts
       </match>
     </label>
 
-    <label @MESSAGES_KAFKA>
+    <label @CORE_KAFKA>
       <match **>
         @type copy
         <store>
           @type kafka2
           brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
-          default_topic syslog.messages
+          default_topic k8slog.core
           <format>
             @type json
           </format>
         </store>
         <store>
           @type file
-          path /tmp/messages
+          path /tmp/core
           time_slice_format %Y%m%d
           <format>
             @type json

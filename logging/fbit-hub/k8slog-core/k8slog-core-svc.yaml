@@ -1,15 +1,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: fbit-hub-svc
+  name: k8slog-core-svc
   namespace: fbit-hub
 spec:
   type: NodePort
   #clusterIP: None
   selector:
-    app: syslog-messages
+    app: k8slog-core
   ports:
-  - name: messages-port
-    port: 32101
-    nodePort: 32101
-    targetPort: 32101
+  - name: core-port
+    port: 32111
+    nodePort: 32111
+    targetPort: 32111

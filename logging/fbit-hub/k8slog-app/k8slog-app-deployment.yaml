@@ -27,7 +27,7 @@ spec:
             - /usr/bin/gem install fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-route;
               /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
           volumeMounts:
-          - name: messages-config
+          - name: syslog-messages-config 
             mountPath: "/fluentd/etc/"
       volumes:
       - name: syslog-messages-config

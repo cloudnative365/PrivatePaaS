@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: fbit-hub-svc
+  name: syslog-messages-svc
   namespace: fbit-hub
 spec:
   type: NodePort
