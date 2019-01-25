@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: syslog-messages-config
+  name: nginx-error-config
   namespace: fbit-hub
 data:
   fluent.conf: |
@@ -27,43 +27,43 @@ data:
     # message input
     <source>
       @type forward
-      @label @MESSAGES
-      port 32101
+      @label @ERROR
+      port 32122
       <parse>
-        @type syslog
+        @type nginx
       </parse>
       bind 0.0.0.0
       body_size_limit 32m
       keepalive_timeout 10s
     </source>
 
-    <label @MESSAGES>
+    <label @ERROR>
       <filter **>
         @type record_transformer
         <record>
-          log_ident syslog.messages
+          log_ident nginx.error
         </record>
       </filter>
       <match **>
         @type route
-        add_tag_prefix syslog.messages
+        add_tag_prefix nginx.error
         <route **>
           copy
-          @label @MESSAGES_ALERT
+          @label @ERROR_ALERT
         </route>
         <route **>
           copy
-          @label @MESSAGES_KAFKA
+          @label @ERROR_KAFKA
         </route>
       </match>
     </label>
 
-    <label @MESSAGES_ALERT>
+    <label @ERROR_ALERT>
       <filter **>
         @type grep
         <regexp>
-          key ident
-          pattern su
+          key method
+          pattern POST
         </regexp>
       </filter>
       <filter **>
@@ -80,20 +80,20 @@ data:
       </match>
     </label>
 
-    <label @MESSAGES_KAFKA>
+    <label @ERROR_KAFKA>
       <match **>
         @type copy
         <store>
           @type kafka2
           brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
-          default_topic syslog.messages
+          default_topic nginx.error
           <format>
             @type json
           </format>
         </store>
         <store>
           @type file
-          path /tmp/messages
+          path /tmp/error
           time_slice_format %Y%m%d
           <format>
             @type json

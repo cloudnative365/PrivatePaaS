@@ -1,15 +1,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: syslog-messages-svc
+  name: nginx-access-svc
   namespace: fbit-hub
 spec:
   type: NodePort
   #clusterIP: None
   selector:
-    app: syslog-messages
+    app: nginx-access
   ports:
-  - name: messages-port
-    port: 32101
-    nodePort: 32101
-    targetPort: 32101
+  - name: access-port
+    port: 32121
+    nodePort: 32121
+    targetPort: 32121

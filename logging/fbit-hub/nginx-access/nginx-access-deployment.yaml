@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syslog-message-deploy
+  name: nginx-access-deploy
   namespace: fbit-hub
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: syslog-messages
+      app: nginx-access
   template:
     metadata:
       labels:
-        app: syslog-messages
+        app: nginx-access
     spec:
       containers:
-        - name: syslog-message
+        - name: nginx-access
           image: docker.io/fluent/fluentd
           imagePullPolicy: IfNotPresent
           ports:
           - name: metrics-port
             containerPort: 24231
-          - name: messages-port
-            containerPort: 32101
+          - name: access-port
+            containerPort: 32121
           command: ['/bin/sh', '-c']
           args:
             - /usr/bin/gem install fluent-plugin-alertmanager fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-route;
               /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
           volumeMounts:
-          - name: syslog-messages-config 
+          - name: nginx-access-config 
             mountPath: "/fluentd/etc/"
       volumes:
-      - name: syslog-messages-config
+      - name: nginx-access-config
         configMap:
-          name: syslog-messages-config
+          name: nginx-access-config
