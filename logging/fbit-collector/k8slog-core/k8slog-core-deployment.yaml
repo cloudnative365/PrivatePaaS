@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syslog-messages-deploy
+  namespace: fbit-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: syslog-messages
+  template:
+    metadata:
+      labels:
+        app: syslog-messages
+    spec:
+      containers:
+        - name: syslog-messages
+          image: docker.io/fluent/fluentd
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: metrics-port
+            containerPort: 24231
+          command: ['/bin/sh', '-c']
+          args:
+            - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-suppress;
+              /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
+          volumeMounts:
+          - name: syslog-messages
+            mountPath: "/fluentd/etc/"
+      volumes:
+      - name: syslog-messages
+        configMap:
+          name: syslog-messages-config

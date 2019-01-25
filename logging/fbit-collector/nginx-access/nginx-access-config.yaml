@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syslog-messages-config
+  namespace: fbit-collector
+data:
+  fluent.conf: |
+    #-----metrics for promethues-----
+    <source>
+      @type prometheus
+    </source>
+  
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+  
+    <source>
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+    #-----alert log to es-----
+    <source>
+      @type kafka
+      @label @MESSAGES
+      brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
+      format json
+      topics syslog.messages
+    </source>
+
+    <label @MESSAGES>
+      <filter **>
+        @type     suppress
+        interval  10
+        num       2
+        attr_keys host,message
+      </filter>
+      <match **>
+        @type copy
+        <store>
+          @type elasticsearch
+          hosts 10.210.149.25:9200,10.210.149.26:9200,10.210.149.27:9200
+          flush_interval 5s
+          logstash_format true
+          include_timestamp true
+          logstash_prefix ${tag}
+        </store>
+        <store>
+          @type file
+          <format>
+            @type json
+          </format>
+          path /tmp/messages
+          time_slice_format %Y%m%d
+        </store>
+      </match>
+    </label>
