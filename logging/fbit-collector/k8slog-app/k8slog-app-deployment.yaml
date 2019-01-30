@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syslog-messages-deploy
+  name: k8slog-app-deploy
   namespace: fbit-collector
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: syslog-messages
+      app: k8slog-app
   template:
     metadata:
       labels:
-        app: syslog-messages
+        app: k8slog-app
     spec:
       containers:
-        - name: syslog-messages
+        - name: k8slog-app
           image: docker.io/fluent/fluentd
           imagePullPolicy: IfNotPresent
           ports:
@@ -25,9 +25,9 @@ spec:
             - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-suppress;
               /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
           volumeMounts:
-          - name: syslog-messages
+          - name: k8slog-app
             mountPath: "/fluentd/etc/"
       volumes:
-      - name: syslog-messages
+      - name: k8slog-app
         configMap:
-          name: syslog-messages-config
+          name: k8slog-app-config

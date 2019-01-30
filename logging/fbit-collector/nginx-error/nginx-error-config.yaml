@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: syslog-messages-config
+  name: nginx-error-config
   namespace: fbit-collector
 data:
   fluent.conf: |
@@ -26,19 +26,13 @@ data:
     #-----alert log to es-----
     <source>
       @type kafka
-      @label @MESSAGES
+      @label @ERROR
       brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
       format json
-      topics syslog.messages
+      topics nginx.error
     </source>
 
-    <label @MESSAGES>
-      <filter **>
-        @type     suppress
-        interval  10
-        num       2
-        attr_keys host,message
-      </filter>
+    <label @ERROR>
       <match **>
         @type copy
         <store>
@@ -54,7 +48,7 @@ data:
           <format>
             @type json
           </format>
-          path /tmp/messages
+          path /tmp/error
           time_slice_format %Y%m%d
         </store>
       </match>

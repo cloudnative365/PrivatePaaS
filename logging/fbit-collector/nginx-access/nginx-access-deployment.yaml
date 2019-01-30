@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syslog-messages-deploy
+  name: nginx-access-deploy
   namespace: fbit-collector
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: syslog-messages
+      app: nginx-access
   template:
     metadata:
       labels:
-        app: syslog-messages
+        app: nginx-access
     spec:
       containers:
-        - name: syslog-messages
+        - name: nginx-access
           image: docker.io/fluent/fluentd
           imagePullPolicy: IfNotPresent
           ports:
@@ -25,9 +25,9 @@ spec:
             - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-suppress;
               /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
           volumeMounts:
-          - name: syslog-messages
+          - name: nginx-access
             mountPath: "/fluentd/etc/"
       volumes:
-      - name: syslog-messages
+      - name: nginx-access
         configMap:
-          name: syslog-messages-config
+          name: nginx-access-config

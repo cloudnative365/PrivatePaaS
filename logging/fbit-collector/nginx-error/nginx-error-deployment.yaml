@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syslog-messages-deploy
+  name: nginx-error-deploy
   namespace: fbit-collector
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: syslog-messages
+      app: nginx-error
   template:
     metadata:
       labels:
-        app: syslog-messages
+        app: nginx-error
     spec:
       containers:
-        - name: syslog-messages
+        - name: nginx-error
           image: docker.io/fluent/fluentd
           imagePullPolicy: IfNotPresent
           ports:
@@ -25,9 +25,9 @@ spec:
             - /usr/bin/gem install fluent-plugin-elasticsearch fluent-plugin-prometheus fluent-plugin-kafka fluent-plugin-suppress;
               /usr/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins;
           volumeMounts:
-          - name: syslog-messages
+          - name: nginx-error
             mountPath: "/fluentd/etc/"
       volumes:
-      - name: syslog-messages
+      - name: nginx-error
         configMap:
-          name: syslog-messages-config
+          name: nginx-error-config

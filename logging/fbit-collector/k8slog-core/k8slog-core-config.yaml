@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: syslog-messages-config
+  name: k8slog-core-config
   namespace: fbit-collector
 data:
   fluent.conf: |
@@ -26,18 +26,18 @@ data:
     #-----alert log to es-----
     <source>
       @type kafka
-      @label @MESSAGES
+      @label @CORE
       brokers 10.210.149.25:9092,10.210.149.26:9092,10.210.149.27:9092
       format json
-      topics syslog.messages
+      topics k8slog.core
     </source>
 
-    <label @MESSAGES>
+    <label @CORE>
       <filter **>
         @type     suppress
         interval  10
         num       2
-        attr_keys host,message
+        attr_keys host,log
       </filter>
       <match **>
         @type copy
@@ -54,7 +54,7 @@ data:
           <format>
             @type json
           </format>
-          path /tmp/messages
+          path /tmp/core
           time_slice_format %Y%m%d
         </store>
       </match>
